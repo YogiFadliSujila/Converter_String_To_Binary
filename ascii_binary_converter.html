@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ASCII ⟶ Binary Converter | Keamanan Siber</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #050c10;
+        --panel: #091520;
+        --border: #0e3a50;
+        --glow: #00e5ff;
+        --glow2: #00ff88;
+        --orange: #ff6b2b;
+        --red: #ff2d55;
+        --dim: #1a3a4a;
+        --text: #cceeff;
+        --muted: #446677;
+        --mono: "Share Tech Mono", monospace;
+        --display: "Orbitron", sans-serif;
+        --body: "Rajdhani", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--body);
+        min-height: 100vh;
+        overflow-x: hidden;
+        cursor: crosshair;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.15) 2px,
+          rgba(0, 0, 0, 0.15) 4px
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+      #rain {
+        position: fixed;
+        inset: 0;
+        opacity: 0.07;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 24px 60px;
+      }
+
+      /* HEADER */
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeDown 0.8s ease both;
+      }
+      .badge {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--glow2);
+        border: 1px solid var(--glow2);
+        padding: 3px 12px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
+      }
+      h1 {
+        font-family: var(--display);
+        font-size: clamp(22px, 4vw, 40px);
+        font-weight: 900;
+        letter-spacing: 3px;
+        color: var(--glow);
+        text-shadow:
+          0 0 30px rgba(0, 229, 255, 0.5),
+          0 0 60px rgba(0, 229, 255, 0.2);
+        line-height: 1.1;
+        margin-bottom: 10px;
+      }
+      h1 span {
+        color: var(--glow2);
+      }
+      .subtitle {
+        font-family: var(--body);
+        font-size: 14px;
+        color: var(--muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* INPUT */
+      .input-section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-top: 2px solid var(--glow);
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        position: relative;
+        box-shadow:
+          0 0 40px rgba(0, 229, 255, 0.06),
+          inset 0 1px 0 rgba(0, 229, 255, 0.08);
+        animation: fadeUp 0.7s 0.2s ease both;
+      }
+      .input-section::before {
+        content: "INPUT TERMINAL";
+        position: absolute;
+        top: -10px;
+        left: 24px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--glow);
+        background: var(--panel);
+        padding: 0 8px;
+        letter-spacing: 3px;
+      }
+      .input-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .prompt {
+        font-family: var(--mono);
+        color: var(--glow2);
+        font-size: 18px;
+        white-space: nowrap;
+      }
+      input[type="text"] {
+        flex: 1;
+        min-width: 200px;
+        background: rgba(0, 229, 255, 0.04);
+        border: 1px solid var(--border);
+        border-bottom: 2px solid var(--glow);
+        color: var(--glow);
+        font-family: var(--mono);
+        font-size: 22px;
+        padding: 10px 16px;
+        outline: none;
+        letter-spacing: 4px;
+        caret-color: var(--glow);
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s;
+      }
+      input[type="text"]:focus {
+        border-color: var(--glow);
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+      }
+      input::placeholder {
+        color: var(--muted);
+        letter-spacing: 2px;
+        font-size: 14px;
+      }
+      .btn-convert {
+        background: transparent;
+        border: 1px solid var(--glow);
+        color: var(--glow);
+        font-family: var(--display);
+        font-size: 11px;
+        letter-spacing: 3px;
+        padding: 12px 24px;
+        cursor: crosshair;
+        text-transform: uppercase;
+        transition: all 0.25s;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-convert::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--glow);
+        transform: translateX(-100%);
+        transition: transform 0.25s;
+        z-index: -1;
+      }
+      .btn-convert:hover {
+        color: var(--bg);
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+      }
+      .btn-convert:hover::before {
+        transform: translateX(0);
+      }
+      .btn-clear {
+        background: transparent;
+        border: 1px solid var(--muted);
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 12px 16px;
+        cursor: crosshair;
+        letter-spacing: 2px;
+        transition: all 0.25s;
+      }
+      .btn-clear:hover {
+        border-color: var(--red);
+        color: var(--red);
+      }
+      .char-count {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 10px;
+        letter-spacing: 2px;
+      }
+      .char-count span {
+        color: var(--glow);
+      }
+
+      /* STATS */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 28px;
+        animation: fadeUp 0.7s 0.35s ease both;
+      }
+      .stat-card {
+        background: var(--panel);
+        border: 1px solid var(--dim);
+        padding: 16px 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.3s;
+      }
+      .stat-card:hover {
+        border-color: var(--glow);
+      }
+      .stat-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--glow);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s;
+      }
+      .stat-card:hover::after {
+        transform: scaleX(1);
+      }
+      .stat-val {
+        font-family: var(--display);
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--glow);
+        display: block;
+        text-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+      }
+      .stat-lbl {
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 4px;
+        display: block;
+      }
+
+      /* ── GABUNGAN PANEL (BARU) ── */
+      .combined-panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-top: 2px solid var(--orange);
+        padding: 24px 28px;
+        margin-bottom: 28px;
+        position: relative;
+        animation: fadeUp 0.7s 0.45s ease both;
+        display: none;
+      }
+      .combined-panel.visible {
+        display: block;
+      }
+      .combined-panel::before {
+        content: "GABUNGAN OUTPUT";
+        position: absolute;
+        top: -10px;
+        left: 24px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--orange);
+        background: var(--panel);
+        padding: 0 8px;
+        letter-spacing: 3px;
+      }
+      .combined-row {
+        margin-bottom: 18px;
+      }
+      .combined-row:last-child {
+        margin-bottom: 0;
+      }
+      .combined-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .combined-label .lbl-ascii {
+        color: var(--glow);
+      }
+      .combined-label .lbl-bin {
+        color: var(--glow2);
+      }
+      .combined-value {
+        font-family: var(--mono);
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--dim);
+        border-left: 3px solid;
+        padding: 14px 18px;
+        word-break: break-all;
+        line-height: 2;
+        position: relative;
+      }
+      .combined-value.ascii-val {
+        font-size: 20px;
+        color: var(--glow);
+        border-left-color: var(--glow);
+        letter-spacing: 2px;
+      }
+      .combined-value.bin-val {
+        font-size: 15px;
+        color: var(--glow2);
+        border-left-color: var(--glow2);
+        letter-spacing: 3px;
+      }
+      /* setiap blok karakter diberi warna bergantian */
+      .combined-value .chunk-a {
+        color: var(--glow);
+      }
+      .combined-value .chunk-b {
+        color: #7ec8e3;
+      }
+      .combined-value .g-chunk-a {
+        color: var(--glow2);
+      }
+      .combined-value .g-chunk-b {
+        color: #00cc66;
+      }
+
+      /* tombol copy */
+      .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        background: transparent;
+        border: 1px solid var(--muted);
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 2px;
+        padding: 4px 10px;
+        cursor: crosshair;
+        transition: all 0.2s;
+        text-transform: uppercase;
+      }
+      .copy-btn:hover {
+        border-color: var(--glow);
+        color: var(--glow);
+      }
+      .copy-btn.copied {
+        border-color: var(--glow2);
+        color: var(--glow2);
+      }
+
+      /* separator per karakter */
+      .combined-value .sep {
+        color: var(--dim);
+        font-size: 11px;
+        user-select: none;
+      }
+
+      /* TABLE */
+      .table-wrap {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-top: 2px solid var(--glow2);
+        position: relative;
+        animation: fadeUp 0.7s 0.5s ease both;
+        overflow: hidden;
+      }
+      .table-wrap::before {
+        content: "CONVERSION OUTPUT";
+        position: absolute;
+        top: -10px;
+        left: 24px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--glow2);
+        background: var(--panel);
+        padding: 0 8px;
+        letter-spacing: 3px;
+      }
+      .table-scroll {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+      thead tr {
+        background: rgba(0, 255, 136, 0.06);
+        border-bottom: 1px solid var(--glow2);
+      }
+      th {
+        padding: 14px 16px;
+        text-align: center;
+        color: var(--glow2);
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+      td {
+        padding: 11px 16px;
+        text-align: center;
+        border-bottom: 1px solid rgba(14, 58, 80, 0.5);
+        transition: background 0.2s;
+      }
+      tr:hover td {
+        background: rgba(0, 229, 255, 0.04);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .td-no {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .td-char {
+        font-size: 22px;
+        color: var(--glow);
+        text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+        letter-spacing: 0;
+      }
+      .td-ascii {
+        color: #7ec8e3;
+      }
+      .td-hex {
+        color: var(--orange);
+      }
+      .td-bin {
+        color: var(--glow2);
+        letter-spacing: 4px;
+        font-size: 14px;
+      }
+      .td-bin .b1 {
+        color: var(--glow2);
+      }
+      .td-bin .b0 {
+        color: var(--muted);
+      }
+      .td-bin span {
+        display: inline-block;
+      }
+
+      /* EMPTY */
+      .empty {
+        text-align: center;
+        padding: 60px 20px;
+      }
+      .empty-icon {
+        font-size: 48px;
+        opacity: 0.3;
+        display: block;
+        margin-bottom: 16px;
+      }
+      .empty p {
+        font-family: var(--mono);
+        color: var(--muted);
+        font-size: 13px;
+        letter-spacing: 2px;
+      }
+
+      /* TICKER */
+      .binary-ticker {
+        margin-top: 40px;
+        overflow: hidden;
+        height: 22px;
+        border-top: 1px solid var(--dim);
+        padding-top: 6px;
+        animation: fadeUp 0.7s 0.8s ease both;
+      }
+      .ticker-inner {
+        display: flex;
+        gap: 6px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--dim);
+        animation: scrollLeft 18s linear infinite;
+        white-space: nowrap;
+      }
+
+      /* INFO */
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 28px;
+        animation: fadeUp 0.7s 0.65s ease both;
+      }
+      .info-box {
+        background: var(--panel);
+        border: 1px solid var(--dim);
+        padding: 20px 22px;
+      }
+      .info-box h3 {
+        font-family: var(--display);
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: var(--glow);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+        border-bottom: 1px solid var(--dim);
+        padding-bottom: 8px;
+      }
+      .info-box code {
+        display: block;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--glow2);
+        margin: 4px 0;
+        letter-spacing: 1px;
+      }
+      .info-box .desc {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      /* ANIMATIONS */
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes scrollLeft {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8) translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .cursor-blink {
+        animation: blink 1s step-end infinite;
+      }
+      .row-anim {
+        animation: popIn 0.3s ease both;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="rain"></canvas>
+    <div class="wrap">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="badge">⬡ Keamanan Siber · Praktikum ⬡</div>
+        <h1>ASCII <span>⟶</span> BINARY<br />CONVERTER</h1>
+        <p class="subtitle">Character · Decimal · Hexadecimal · 8-bit Binary</p>
+      </header>
+
+      <!-- INPUT -->
+      <section class="input-section">
+        <div class="input-row">
+          <span class="prompt">root@siber:~$&nbsp;</span>
+          <input
+            type="text"
+            id="inputText"
+            placeholder="ketik kalimat... (contoh: unsap)"
+            maxlength="64"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="btn-convert" onclick="convert()">CONVERT</button>
+          <button class="btn-clear" onclick="clearAll()">CLR</button>
+        </div>
+        <div class="char-count">
+          karakter: <span id="charCount">0</span> / 64 &nbsp;|&nbsp; tekan
+          <span style="color: var(--glow)">ENTER</span> atau klik CONVERT
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <div class="stats">
+        <div class="stat-card">
+          <span class="stat-val" id="statChars">0</span
+          ><span class="stat-lbl">Total Karakter</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val" id="statBits">0</span
+          ><span class="stat-lbl">Total Bit</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val" id="statBytes">0</span
+          ><span class="stat-lbl">Total Byte</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val" id="statAvg">—</span
+          ><span class="stat-lbl">Rata-rata ASCII</span>
+        </div>
+      </div>
+
+      <!-- ══ GABUNGAN PANEL (BARU) ══ -->
+      <div class="combined-panel" id="combinedPanel">
+        <!-- ASCII Gabungan -->
+        <div class="combined-row">
+          <div class="combined-label">
+            <span class="lbl-ascii">▸ ASCII DESIMAL GABUNGAN</span>
+            <span
+              style="color: var(--muted); font-size: 9px; letter-spacing: 1px"
+              >(semua nilai ASCII disambung tanpa spasi)</span
+            >
+          </div>
+          <div class="combined-value ascii-val" id="combinedAscii">
+            <button
+              class="copy-btn"
+              onclick="copyVal('combinedAsciiRaw', 'this')"
+              id="copyAsciiBtn"
+            >
+              COPY
+            </button>
+            <span id="combinedAsciiDisplay"></span>
+          </div>
+          <input type="hidden" id="combinedAsciiRaw" />
+        </div>
+
+        <!-- Biner Gabungan -->
+        <div class="combined-row">
+          <div class="combined-label">
+            <span class="lbl-bin">▸ BINER 8-BIT GABUNGAN</span>
+            <span
+              style="color: var(--muted); font-size: 9px; letter-spacing: 1px"
+              >(semua 8-bit disambung tanpa spasi)</span
+            >
+          </div>
+          <div class="combined-value bin-val" id="combinedBin">
+            <button
+              class="copy-btn"
+              onclick="copyVal('combinedBinRaw', 'this')"
+              id="copyBinBtn"
+            >
+              COPY
+            </button>
+            <span id="combinedBinDisplay"></span>
+          </div>
+          <input type="hidden" id="combinedBinRaw" />
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Karakter</th>
+                <th>Desimal (ASCII)</th>
+                <th>Heksadesimal</th>
+                <th>Biner 8-bit</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr>
+                <td colspan="5">
+                  <div class="empty">
+                    <span class="empty-icon">⌨</span>
+                    <p>
+                      _ ketik kalimat di input di atas &amp; tekan ENTER<span
+                        class="cursor-blink"
+                        >█</span
+                      >
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INFO BOXES -->
+      <div class="info-grid">
+        <div class="info-box">
+          <h3>Rumus Excel</h3>
+          <code>=CODE(karakter)</code>
+          <code>=DEC2BIN(n, 8)</code>
+          <code>=DEC2HEX(n, 2)</code>
+          <code>=VLOOKUP(C9, DB!$A:$D, 3, 0)</code>
+        </div>
+        <div class="info-box">
+          <h3>Algoritma Konversi</h3>
+          <p class="desc">
+            1. Ambil nilai ASCII tiap karakter<br />
+            2. Bagi berulang dengan 2, catat sisa<br />
+            3. Baca sisa dari bawah → atas = biner<br />
+            4. Pad ke 8-bit (tambah 0 di depan)
+          </p>
+        </div>
+        <div class="info-box">
+          <h3>Referensi Rentang ASCII</h3>
+          <code style="color: #7ec8e3">48–57 &nbsp; → Angka 0–9</code>
+          <code style="color: var(--glow)">65–90 &nbsp; → Huruf A–Z</code>
+          <code style="color: var(--glow2)">97–122 → Huruf a–z</code>
+          <code style="color: var(--orange)">32–47 &nbsp; → Simbol umum</code>
+        </div>
+      </div>
+
+      <!-- TICKER -->
+      <div class="binary-ticker">
+        <div class="ticker-inner" id="ticker"></div>
+      </div>
+    </div>
+    <!-- /wrap -->
+
+    <script>
+      // ── Rain ────────────────────────────────────────────────────────
+      (function () {
+        const canvas = document.getElementById("rain");
+        const ctx = canvas.getContext("2d");
+        let cols, drops;
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          cols = Math.floor(canvas.width / 18);
+          drops = Array(cols).fill(1);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        function draw() {
+          ctx.fillStyle = "rgba(5,12,16,.18)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#00e5ff";
+          ctx.font = "13px Share Tech Mono";
+          drops.forEach((y, i) => {
+            ctx.fillText(Math.random() > 0.5 ? "1" : "0", i * 18, y * 18);
+            if (y * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+          });
+        }
+        setInterval(draw, 60);
+      })();
+
+      // ── Ticker ──────────────────────────────────────────────────────
+      (function () {
+        const t = document.getElementById("ticker");
+        let str = "";
+        for (let i = 0; i < 200; i++) str += Math.random() > 0.5 ? "1" : "0";
+        t.textContent = str + str;
+      })();
+
+      // ── Input live count ────────────────────────────────────────────
+      const inp = document.getElementById("inputText");
+      inp.addEventListener("input", () => {
+        document.getElementById("charCount").textContent = inp.value.length;
+      });
+      inp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") convert();
+      });
+
+      // ── Convert ─────────────────────────────────────────────────────
+      function convert() {
+        const text = inp.value;
+        const tbody = document.getElementById("tableBody");
+        const panel = document.getElementById("combinedPanel");
+
+        if (!text.trim()) {
+          tbody.innerHTML = `<tr><td colspan="5"><div class="empty">
+      <span class="empty-icon">⚠</span>
+      <p>_ input kosong. ketik sesuatu dulu<span class="cursor-blink">█</span></p>
+    </div></td></tr>`;
+          panel.classList.remove("visible");
+          updateStats(0, []);
+          return;
+        }
+
+        const rows = [];
+        const asciiVals = [];
+        let rawAscii = "";
+        let rawBin = "";
+        let asciiChunksHtml = "";
+        let binChunksHtml = "";
+
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          const code = ch.charCodeAt(0);
+          const bin8 = code.toString(2).padStart(8, "0");
+          const hex = code.toString(16).toUpperCase().padStart(2, "0");
+          asciiVals.push(code);
+
+          // Gabungan raw (tanpa format)
+          rawAscii += code;
+          rawBin += bin8;
+
+          // Warna bergantian per karakter (chunk)
+          const isEven = i % 2 === 0;
+          asciiChunksHtml += `<span class="${isEven ? "chunk-a" : "chunk-b"}">${code}</span>`;
+          binChunksHtml += `<span class="${isEven ? "g-chunk-a" : "g-chunk-b"}">${bin8}</span>`;
+
+          // Table row
+          const binHtml = bin8
+            .split("")
+            .map((b) => `<span class="${b === "1" ? "b1" : "b0"}">${b}</span>`)
+            .join("");
+          const charDisp =
+            ch === " "
+              ? '<span style="font-size:12px;color:var(--muted)">[SPASI]</span>'
+              : ch;
+
+          rows.push(`
+      <tr class="row-anim" style="animation-delay:${i * 40}ms">
+        <td class="td-no">${i + 1}</td>
+        <td class="td-char">${charDisp}</td>
+        <td class="td-ascii">${code}</td>
+        <td class="td-hex">0x${hex}</td>
+        <td class="td-bin">${binHtml}</td>
+      </tr>`);
+        }
+
+        // Isi tabel
+        tbody.innerHTML = rows.join("");
+
+        // Isi panel gabungan
+        document.getElementById("combinedAsciiDisplay").innerHTML =
+          asciiChunksHtml;
+        document.getElementById("combinedBinDisplay").innerHTML = binChunksHtml;
+        document.getElementById("combinedAsciiRaw").value = rawAscii;
+        document.getElementById("combinedBinRaw").value = rawBin;
+        panel.classList.add("visible");
+
+        updateStats(text.length, asciiVals);
+        updateTicker(rawBin);
+      }
+
+      // ── Stats ───────────────────────────────────────────────────────
+      function updateStats(len, asciiVals) {
+        document.getElementById("statChars").textContent = len;
+        document.getElementById("statBits").textContent = len * 8;
+        document.getElementById("statBytes").textContent = len;
+        document.getElementById("statAvg").textContent =
+          len > 0
+            ? (asciiVals.reduce((a, b) => a + b, 0) / len).toFixed(1)
+            : "—";
+      }
+
+      // ── Ticker update ────────────────────────────────────────────────
+      function updateTicker(binStr) {
+        const t = document.getElementById("ticker");
+        t.textContent = (binStr + " ").repeat(8);
+      }
+
+      // ── Copy to clipboard ────────────────────────────────────────────
+      function copyVal(hiddenId, btnRef) {
+        const val = document.getElementById(hiddenId).value;
+        navigator.clipboard.writeText(val).then(() => {
+          // cari tombol yang diklik
+          const allBtns = document.querySelectorAll(".copy-btn");
+          allBtns.forEach((b) => {
+            if (b.getAttribute("onclick").includes(hiddenId)) {
+              const orig = b.textContent;
+              b.textContent = "COPIED ✓";
+              b.classList.add("copied");
+              setTimeout(() => {
+                b.textContent = orig;
+                b.classList.remove("copied");
+              }, 1800);
+            }
+          });
+        });
+      }
+
+      // ── Clear ────────────────────────────────────────────────────────
+      function clearAll() {
+        inp.value = "";
+        document.getElementById("charCount").textContent = "0";
+        document.getElementById("tableBody").innerHTML =
+          `<tr><td colspan="5"><div class="empty">
+    <span class="empty-icon">⌨</span>
+    <p>_ ketik kalimat di input di atas &amp; tekan ENTER<span class="cursor-blink">█</span></p>
+  </div></td></tr>`;
+        document.getElementById("combinedPanel").classList.remove("visible");
+        updateStats(0, []);
+        document.getElementById("ticker").textContent =
+          "01011001001010011100101001";
+        inp.focus();
+      }
+
+      // ── Auto load ────────────────────────────────────────────────────
+      window.addEventListener("load", () => {
+        inp.value = "Kelompok 5";
+        document.getElementById("charCount").textContent = inp.value.length;
+        convert();
+        inp.focus();
+      });
+    </script>
+  </body>
+</html>
